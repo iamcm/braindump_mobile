@@ -31,7 +31,7 @@
 				}
 			}).done(function(data) {
 				api_key = data.key;
-				localStorage.setItem(api_key);
+				localStorage.setItem('api_key', api_key);
 				loadTags();
 				$.mobile.changePage("#home");	
 		    }).fail(function(){
