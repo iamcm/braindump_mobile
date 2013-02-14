@@ -10,8 +10,8 @@
 	<script src="handlebars.js"></script>
 
 	<script type="text/javascript">
-		var api_key = null;
 		var api_url = 'https://braindump.iamcm.co.uk'
+		var api_url = 'http://192.168.1.21:8000'
 		var itemscache = {};
 		var _tags={};
 
@@ -30,8 +30,6 @@
 					'password':$('#form-login-password').val()
 				}
 			}).done(function(data) {
-				api_key = data.key;
-				localStorage.setItem('api_key', api_key);
 				loadTags();
 				$.mobile.changePage("#home");	
 		    }).fail(function(){
@@ -43,7 +41,7 @@
 
 		function saveItem(){
 			var title = $('#form-item-title').val();
-			var jqxhr = $.ajax(api_url +'/api/save/item?key='+ api_key , {
+			var jqxhr = $.ajax(api_url +'/api/save/item' , {
 				type:'post',
 				data:{
 					'title':title,
@@ -53,22 +51,26 @@
 			}).done(function() { 
 				$.mobile.changePage("#home");	
 				$('#form-add-item').find("input[type=text], textarea").val("");
+		    }).fail(function(){
+				$.mobile.changePage("#login");	
 		    });			    
 		}
 
 		function loadTags(){
-			var jqxhr = $.ajax(api_url +'/api/tags?key='+ api_key )
+			var jqxhr = $.ajax(api_url +'/api/tags'  )
 			    .done(function(data) { 
 			    	data = {'tags':data};
 			    	_tags = data;
 			    	$('#tagsListContainer')
 			    		.html(getHtml("tag-list-template", data))
 			    		.trigger('create');
-			    });			    
+			    }).fail(function(){
+					$.mobile.changePage("#login");	
+			    });
 		}
 
 		function loadItemsByTag(tag){
-			var jqxhr = $.ajax(api_url +'/api/filter/tag/'+ tag +'?key='+ api_key )
+			var jqxhr = $.ajax(api_url +'/api/filter/tag/'+ tag)
 			    .done(function(data) { 
 
 			    	$.each(data, function(i, item){
@@ -81,13 +83,15 @@
 			    	$('#itemsListContainer')
 			    		.html(getHtml("item-list-template", data))
 			    		.trigger('create');
+			    }).fail(function(){
+					$.mobile.changePage("#login");	
 			    });		
 
 			$.mobile.changePage("#items");	    
 		}
 
 		function loadsItemsBySearch(searchterm){
-			var jqxhr = $.ajax(api_url +'/api/filter/search/'+ searchterm +'?key='+ api_key )
+			var jqxhr = $.ajax(api_url +'/api/filter/search/'+ searchterm )
 			    .done(function(data) { 
 
 			    	$.each(data, function(i, item){
@@ -100,6 +104,8 @@
 			    	$('#itemsListContainer')
 			    		.html(getHtml("item-list-template", data))
 			    		.trigger('create');
+			    }).fail(function(){
+					$.mobile.changePage("#login");	
 			    });		
 
 			$.mobile.changePage("#items");	    
@@ -146,11 +152,8 @@
 		}
 
 		$(document).ready(function(){
-			api_key = localStorage.getItem('api_key');
 			loadTags();
 			initObservers();
-
-			if(!api_key) $.mobile.changePage("#login");	
 		});
 	</script>
 
