@@ -31,6 +31,7 @@
 				}
 			}).done(function(data) {
 				api_key = data.key;
+				localStorage.setItem(api_key);
 				loadTags();
 				$.mobile.changePage("#home");	
 		    }).fail(function(){
@@ -145,6 +146,7 @@
 		}
 
 		$(document).ready(function(){
+			api_key = localStorage.getItem('api_key');
 			loadTags();
 			initObservers();
 
@@ -240,7 +242,7 @@
 		<h1>Login</h1>
 	</div>
 
-	<div data-role="content" id="addItemContainer">	
+	<div data-role="content">	
 		<form id="form-login">
 			<label for="form-login-username">Username</label>
     		<input type="text" name="username" value="" id="form-login-username" />
