@@ -25,7 +25,7 @@
 			var jqxhr = $.ajax(api_url +'/api/login' , {
 				type:'post',
 				data:{
-					'username':$('#form-login-username').val(),
+					'email':$('#form-login-email').val(),
 					'password':$('#form-login-password').val()
 				}
 			}).done(function(data) {
@@ -40,12 +40,12 @@
 
 		function saveItem(){
 			var title = $('#form-item-title').val();
-			var jqxhr = $.ajax(api_url +'/api/save/item' , {
+			var jqxhr = $.ajax(api_url +'/api/item' , {
 				type:'post',
 				data:{
 					'title':title,
 					'content':$('#form-item-content').val(),
-					'tags':$('#form-item-tag').val()
+					'tagIds[]':$('#form-item-tag').val()
 				}
 			}).done(function() { 
 				$.mobile.changePage("#home");	
@@ -69,11 +69,11 @@
 		}
 
 		function loadItemsByTag(tag){
-			var jqxhr = $.ajax(api_url +'/api/filter/tag/'+ tag)
+			var jqxhr = $.ajax(api_url +'/api/items?tag='+ tag)
 			    .done(function(data) { 
 
 			    	$.each(data, function(i, item){
-			    		var key = item.id;
+			    		var key = item._id;
 			    		itemscache[key] = item.content;
 			    	})			    	
 
@@ -90,11 +90,11 @@
 		}
 
 		function loadsItemsBySearch(searchterm){
-			var jqxhr = $.ajax(api_url +'/api/filter/search/'+ searchterm )
+			var jqxhr = $.ajax(api_url +'/api/search/'+ searchterm )
 			    .done(function(data) { 
 
 			    	$.each(data, function(i, item){
-			    		var key = item.id;
+			    		var key = item._id;
 			    		itemscache[key] = item.content;
 			    	})			    	
 
@@ -167,7 +167,7 @@
 	<script id="item-list-template" type="text/x-handlebars-template">
 	  	<ul data-role="listview" data-inset="true" >
 	  		{{#each items}}
-			<li><a href="#" onclick="showItemDetail('{{id}}')">{{title}}</a></li>
+			<li><a href="#" onclick="showItemDetail('{{_id}}')">{{title}}</a></li>
 			{{/each}}
 		</ul>
 	</script>
@@ -175,7 +175,7 @@
 	<script id="tags-selectlist-template" type="text/x-handlebars-template">
 	  	<select name="tags" id="form-item-tag">
 	  		{{#each tags}}
-		   <option value="{{id}}">{{name}}</option>
+		   <option value="{{_id}}">{{name}}</option>
 			{{/each}}
 		</select>
 	</script>
@@ -246,8 +246,8 @@
 
 	<div data-role="content">	
 		<form id="form-login">
-			<label for="form-login-username">Username</label>
-    		<input type="text" name="username" value="" id="form-login-username" />
+			<label for="form-login-email">Email</label>
+    		<input type="text" name="email" value="" id="form-login-email" />
 
     		<label for="form-login-password">Password</label>
     		<input type="password" name="password" value="" id="form-login-password" />
